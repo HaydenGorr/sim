@@ -1,7 +1,7 @@
 import sys
 import os
 import json
-from sim.person.person import Person, link_2_people_in_relationship
+from sim.person.person import Person, link_2_people_in_relationship, define_past_marriage
 import random
 import sim.population_distributions as popDist
 import numpy as np
@@ -33,52 +33,54 @@ def main(Pn=5):
     first = -1
     add_current_relationship = False
     add_past_relationship = None
+    link_relationships = []
 
     j = 0
     for i in range(Pn):
 
         if j >= Pn: break
 
-        if (add_current_relationship or add_past_relationship):
-            if (add_current_relationship):
-                newPerson = Person(firstName=FN[j], lastName=LN[j], age=people[first].age + random.uniform(-5, 5), male_sex=not people[first].male_sex)
-                people.append(newPerson)
-                
-                link_2_people_in_relationship(newPerson, people[first], people[first].relationship[0])
+        if (link_relationships):
+            for k in link_relationships:
+                link_index = k[0]
+                if (k[1] == "CR"):
 
-                add_current_relationship = False
+                    relationship_type = people[link_index].relationship[0]
 
-                j+=1
-                if (j >= Pn): break
+                    newly_created_person = Person(firstName=FN[j], lastName=LN[j], age=people[link_index].age + random.uniform(-5, 5), male_sex=not people[link_index].male_sex)
+                    people.append(newly_created_person)
+
+                    link_2_people_in_relationship(people[-1], people[link_index], relationship_type)
+                    j+=1
+                if (k[1] == "PR"):
+
+                    what_happened_to_the_relationship = people[first].pastMarraiges[0]
+
+                    newly_created_person = Person(firstName=FN[j], lastName=LN[j], age=people[link_index].age + random.uniform(-5, 5), male_sex=not people[link_index].male_sex)
+                    people.append(newly_created_person)
+
+                    define_past_marriage(people[-1], people[link_index], what_happened_to_the_relationship)
+                    j+=1
+            continue
+
+        newPerson = Person(firstName=FN[j], lastName=LN[j], age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=random.choice([True, False]))
+        people.append(newPerson)
+
+        if (newPerson.relationship[0] != "single"):
+            # gap_person = newPerson
+            add_current_relationship = True
+            first = j
+            link_relationships.append(j, "CR")
 
 
-            if (add_past_relationship):
-                newPerson = Person(firstName=FN[j], lastName=LN[j], age=people[first].age + random.uniform(-5, 5), male_sex=not people[first].male_sex)
-                people.append(newPerson)
-                people[first].pastMarraiges[1] = people[-1]
-                newPerson.pastMarraiges[0] = people[first].pastMarraiges[0]
-                newPerson.pastMarraiges[1] = people[first]
+        if (newPerson.pastMarraiges[0] != "no change"):
+            # past_gap = newPerson
+            add_past_relationship = True
+            first = j
+            link_relationships.append(j, "PR")
 
-                add_past_relationship = False
-
-                j+=1
-                if (j >= Pn): break
-        else:
-            newPerson = Person(firstName=FN[j], lastName=LN[j], age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=random.choice([True, False]))
-            people.append(newPerson)
-
-            if (newPerson.relationship[0] != "single"):
-                # gap_person = newPerson
-                add_current_relationship = True
-                first = j
-
-            if (newPerson.pastMarraiges[0] != "no change"):
-                # past_gap = newPerson
-                add_past_relationship = True
-                first = j
-
-            j+=1
-            if (j >= Pn): break
+        j+=1
+        if (j >= Pn): break
 
 
     for j in people:  # Looping through the range of Pn

@@ -102,6 +102,12 @@ class Person:
         
         self.relationship = [relationship, person]
 
+    def setPastMarriage(self, what_happened_to_the_relationship, person):
+        assert(what_happened_to_the_relationship in ["no change", "divorced", "widowed"])
+        assert isinstance(person, Person) or person is None, "Argument must be an instance of Person or None"
+        self.pastMarraiges = [what_happened_to_the_relationship, person]
+
+
 
 # Define a function to adjust aggression based on age
 def adjust_aggression_for_age(aggression, age):
@@ -119,3 +125,7 @@ def adjust_aggression_for_age(aggression, age):
 def link_2_people_in_relationship(p1, p2, relationship_type):
     p1.setRelationship(relationship_type, p2)
     p2.setRelationship(relationship_type, p1)
+
+def define_past_marriage(p1, p2, what_happened_to_the_relationship):
+    p1.setPastMarriage(what_happened_to_the_relationship, p2)
+    p2.setPastMarriage(what_happened_to_the_relationship, p1)
