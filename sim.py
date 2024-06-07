@@ -23,6 +23,13 @@ def generate_names(Pn):
 
     return random_first_names, random_last_names
 
+def check_relationship_status(person, link_list, index):
+    if (person.relationship[0] != "single"):
+        link_list.append([index, "CR"])
+
+    if (person.pastMarraiges[0] != "no change"):
+        link_list.append([index, "PR"])
+
 def main(Pn=5):
 
     popDist.initialise(population_size=Pn)
@@ -52,32 +59,41 @@ def main(Pn=5):
 
                     link_2_people_in_relationship(people[-1], people[link_index], relationship_type)
                     j+=1
+
+                    if (people[-1].pastMarraiges[0] != "no change"):
+                        check_relationship_status(people[-1], link_relationships, j)
+
+
                 if (k[1] == "PR"):
 
-                    what_happened_to_the_relationship = people[first].pastMarraiges[0]
+                    what_happened_to_the_relationship = people[link_index].pastMarraiges[0]
 
                     newly_created_person = Person(firstName=FN[j], lastName=LN[j], age=people[link_index].age + random.uniform(-5, 5), male_sex=not people[link_index].male_sex)
                     people.append(newly_created_person)
 
                     define_past_marriage(people[-1], people[link_index], what_happened_to_the_relationship)
                     j+=1
+
+                    if (people[-1].relationship[0] != "single"):
+                        check_relationship_status(people[-1], link_relationships, j)
             continue
 
         newPerson = Person(firstName=FN[j], lastName=LN[j], age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=random.choice([True, False]))
         people.append(newPerson)
 
-        if (newPerson.relationship[0] != "single"):
-            # gap_person = newPerson
-            add_current_relationship = True
-            first = j
-            link_relationships.append(j, "CR")
+        # if (newPerson.relationship[0] != "single"):
+        #     # gap_person = newPerson
+        #     add_current_relationship = True
+        #     first = j
+        #     link_relationships.append([j, "CR"])
 
 
-        if (newPerson.pastMarraiges[0] != "no change"):
-            # past_gap = newPerson
-            add_past_relationship = True
-            first = j
-            link_relationships.append(j, "PR")
+        # if (newPerson.pastMarraiges[0] != "no change"):
+        #     # past_gap = newPerson
+        #     add_past_relationship = True
+        #     first = j
+        #     link_relationships.append([j, "PR"])
+        check_relationship_status(people[-1], link_relationships, j)
 
         j+=1
         if (j >= Pn): break
