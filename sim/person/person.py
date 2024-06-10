@@ -16,7 +16,8 @@ def getBirthday(age):
 
 def initialise_Relationship(person):
     age = person.age
-    if (age<18): return ["single", None]
+    if (age<18):
+        return person.setRelationship("single", None)
 
     P = [1.0, 0.0, 0.0]
     for age_range, probs in popDist.RELATIONSHIP_PROBS.items():
@@ -87,6 +88,7 @@ class Person:
 
         self.relationship = None
         initialise_Relationship(self) # 0=single, 1=relationship, 2=married
+        assert(self.relationship is not None)
 
         self.relationship_strength = (None if self.relationship == 0 else np.random.choice(popDist.generate_normal_dist(60, 10)))
         self.pastMarraiges = isDivorced(self.age, self.agreeableness, self.openness) # never divorced, divorced, widowed

@@ -2,12 +2,34 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import beta
 
-alpha, beta_param = 4, 3
+# alpha, beta_param = 3, 6
 
 AGE_DIST = None
 GENERIC_NORMAL_DIST = None
 RELATIONSHIP_PROBS = None
 DIVORCED_PROBS = None
+
+def generate_age_distribution(population_size):
+    # Define parameters for age groups
+    children_mean, children_std = 10, 5
+    adults_mean, adults_std = 35, 10
+    seniors_mean, seniors_std = 70, 10
+
+    # Proportion of each age group in the population
+    children_prop, adults_prop, seniors_prop = 0.65, 0.20, 0.15
+
+    # Generate ages for each group
+    children = np.random.normal(children_mean, children_std, int(population_size * children_prop))
+    adults = np.random.normal(adults_mean, adults_std, int(population_size * adults_prop))
+    seniors = np.random.normal(seniors_mean, seniors_std, int(population_size * seniors_prop))
+
+    # Combine all age groups
+    ages = np.concatenate([children, adults, seniors])
+
+    # Clip ages to be within a realistic range
+    ages = np.clip(ages, 0, 100)
+
+    return ages
 
 def generate_normal_dist(mean, std_dev):
     # Generate aggression levels using the normal distribution
@@ -23,8 +45,9 @@ def initialise(population_size):
     global RELATIONSHIP_PROBS
     global DIVORCED_PROBS
 
-    AGE_DIST = beta.rvs(alpha, beta_param, size=population_size) * 100
-    AGE_DIST = np.clip(AGE_DIST, 0, 100)
+    # AGE_DIST = beta.rvs(alpha, beta_param, size=population_size) * 100
+    # AGE_DIST = np.clip(AGE_DIST, 0, 100)
+    AGE_DIST = generate_age_distribution(population_size)
 
     GENERIC_NORMAL_DIST = generate_normal_dist(50, 17)
 
