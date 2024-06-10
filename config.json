@@ -1,0 +1,11 @@
+{
+    "generation": {
+        "how_many_people_to_generate": 1000,
+        "recursive_relationship_limit": 4
+    },
+    "start_date": {
+        "year": 1997,
+        "month": 1,
+        "day": 1
+    }
+}

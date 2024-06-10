@@ -3,6 +3,7 @@ import sim.population_distributions as popDist
 import datetime
 import math
 from dateutil.relativedelta import relativedelta
+from config import CONF
 
 # age is a random float generated between 0 - 100
 # we use the first 2 sig figs to get birth date
@@ -12,7 +13,9 @@ def getBirthday(age):
     year_progress = age % 1
     Year = math.floor(age)
     dayOfYear = math.floor(year_progress * 365)
-    return datetime.datetime(1997-Year, 1, 1) + datetime.timedelta(days=dayOfYear)
+    # return datetime.datetime(CONF.start_date.year-Year, CONF.start_date.month, CONF.start_date.day) + datetime.timedelta(days=dayOfYear)
+    asd = CONF.start_date - datetime.timedelta(Year=Year) + datetime.timedelta(days=dayOfYear)
+    return CONF.start_date - datetime.timedelta(Year=Year) + datetime.timedelta(days=dayOfYear)
 
 def initialise_Relationship(person):
     age = person.age
@@ -84,7 +87,9 @@ class Person:
         self.lastName = lastName
         self.male_sex = male_sex
         self.birthday = getBirthday(age)
-        self.age = abs(relativedelta(self.birthday, datetime.datetime(1997, 1, 1))).years
+        self.age = abs(relativedelta(self.birthday, datetime.datetime(CONF.start_date.year, CONF.start_date.month, CONF.start_date.day))).years
+        self.iq = np.random.choice(popDist.IQ_DIST)
+
 
         self.relationship = None
         initialise_Relationship(self) # 0=single, 1=relationship, 2=married
