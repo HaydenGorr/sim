@@ -5,7 +5,6 @@ CONF = None
 
 class config:
     def __init__(self, path):
-        global CONF
         json = load_json_array(path)
         JSON_valid, errors = is_config_json_valid(json)
         if (not JSON_valid):
@@ -18,6 +17,11 @@ class config:
 
 
 
+
+
+def createCONF(path):
+    global CONF
+    CONF = config(path)
 
 
 

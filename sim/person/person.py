@@ -14,8 +14,9 @@ def getBirthday(age):
     Year = math.floor(age)
     dayOfYear = math.floor(year_progress * 365)
     # return datetime.datetime(CONF.start_date.year-Year, CONF.start_date.month, CONF.start_date.day) + datetime.timedelta(days=dayOfYear)
-    asd = CONF.start_date - datetime.timedelta(Year=Year) + datetime.timedelta(days=dayOfYear)
-    return CONF.start_date - datetime.timedelta(Year=Year) + datetime.timedelta(days=dayOfYear)
+    adjusted_date = CONF.start_date.replace(year=CONF.start_date.year - Year)
+    resulting_date = adjusted_date + datetime.timedelta(days=dayOfYear - 1)
+    return resulting_date
 
 def initialise_Relationship(person):
     age = person.age
@@ -88,7 +89,7 @@ class Person:
         self.male_sex = male_sex
         self.birthday = getBirthday(age)
         self.age = abs(relativedelta(self.birthday, datetime.datetime(CONF.start_date.year, CONF.start_date.month, CONF.start_date.day))).years
-        self.iq = np.random.choice(popDist.IQ_DIST)
+        self.iq = math.floor(np.random.choice(popDist.IQ_DIST))
 
 
         self.relationship = None
