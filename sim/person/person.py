@@ -75,7 +75,8 @@ def isDivorced(age, agreeableness, openness):
 
 class Person:
 
-    def __init__(self, firstName, lastName, age, male_sex):
+    def __init__(self, firstName, lastName, age=-1, male_sex=False, person_ref=None):
+
         # Personality
         self.openness = np.random.choice(popDist.generate_normal_dist(50, 25))
         self.conscientiousness = np.random.choice(popDist.generate_normal_dist(50, 15))
@@ -90,19 +91,13 @@ class Person:
         self.birthday = getBirthday(age)
         self.age = abs(relativedelta(self.birthday, datetime.datetime(CONF.start_date.year, CONF.start_date.month, CONF.start_date.day))).years
         self.iq = math.floor(np.random.choice(popDist.IQ_DIST))
-
-
+        
         self.relationship = None
         initialise_Relationship(self) # 0=single, 1=relationship, 2=married
         assert(self.relationship is not None)
 
         self.relationship_strength = (None if self.relationship == 0 else np.random.choice(popDist.generate_normal_dist(60, 10)))
         self.pastMarraiges = isDivorced(self.age, self.agreeableness, self.openness) # never divorced, divorced, widowed
-
-        # Emotion
-        # self.happiness = popDist.generate_normal_dist()
-        # self.sadness = popDist.generate_normal_dist()
-        # self.sadness = popDist.sample_base_stress()
 
     def setRelationship(self, relationship, person):
         assert(relationship in ["single", "relationship", "marraige"])

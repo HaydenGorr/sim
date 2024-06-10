@@ -14,6 +14,6 @@ def link_2_people_in_relationship(p1, p2, relationship_type):
     p1.setRelationship(relationship_type, p2)
     p2.setRelationship(relationship_type, p1)
 
-def define_past_marriage(p1, p2, what_happened_to_the_relationship):
+def link_2_people_in_past_marraige(p1, p2, what_happened_to_the_relationship):
     p1.setPastMarriage(what_happened_to_the_relationship, p2)
     p2.setPastMarriage(what_happened_to_the_relationship, p1)
