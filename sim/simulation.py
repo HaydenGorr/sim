@@ -45,7 +45,12 @@ def generate_people():
 
     return people, age_buckets, big5_buckets
 
-def recursive_match(person,  big_5_key, age_key, big5_buckets, age_buckets, continuous_linking, past):
+def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, continuous_linking, past):
+
+    if (continuous_linking >= CONF.recursive_relationship_limit): 
+        if (past): remove_past_marraige(person)
+        else: remove_relationship(person)
+        return
 
     original_big_5_key = big_5_key
 
@@ -55,10 +60,10 @@ def recursive_match(person,  big_5_key, age_key, big5_buckets, age_buckets, cont
 
     bucket_indx = age_ranges.index(age_key)
     younger_bucket = age_ranges[bucket_indx - (1 if (bucket_indx > 1) else 0)]
-    older_bucket = age_ranges[bucket_indx + (1 if (age_ranges.index(age_key) < 17) else 0)]
+    older_bucket = age_ranges[bucket_indx + (1 if (age_ranges.index(age_key) < 16) else 0)]
     if (past):
         younger_bucket2 = age_ranges[bucket_indx - (2 if (bucket_indx > 2) else 0)]
-        older_bucket2 = age_ranges[bucket_indx + (2 if (age_ranges.index(age_key) < 16) else 0)]
+        older_bucket2 = age_ranges[bucket_indx + (2 if (age_ranges.index(age_key) < 15) else 0)]
 
     bucket_search_order = []
     # This simulates women looking for older men and men looking for younger women
@@ -85,8 +90,10 @@ def recursive_match(person,  big_5_key, age_key, big5_buckets, age_buckets, cont
             if p.male_sex == person.male_sex: continue
             if p is person: continue
             if not past and not check_person_has_current_relationship(p): continue
-            link_2_people_in_relationship(person, p, person.relationship[0])
-            
+            if (past and not check_person_has_past_marraige(p)): continue
+
+            if not past: link_2_people_in_relationship(person, p, person.relationship[0])
+            else: link_2_people_in_past_marraige(person, p, person.pastMarraiges[0])
 
             value, name = p.getMostProminentBig5()
             if not past and check_person_has_past_marraige(p):
@@ -94,27 +101,40 @@ def recursive_match(person,  big_5_key, age_key, big5_buckets, age_buckets, cont
             elif past and check_person_has_current_relationship(p):
                 recursive_match(p, name, currently_searching_age_bucket_index, big5_buckets, age_buckets, continuous_linking + 1, False)
 
-
             matched = True
+
             break
         if matched: break
 
-    if not matched: remove_relationship(person)
-    else:
-        big5_buckets[original_big_5_key][age_key].remove(person)
-        big5_buckets[big_5_key][currently_searching_age_bucket_index].remove(p)
+    if not matched:
+        if not past: remove_relationship(person)
+        else: remove_past_marraige(person)
 
+        if check_person_has_current_relationship(person) and check_person_has_past_marraige(person): 
+            big5_buckets[original_big_5_key][age_key].remove(person)
+    
+    if matched or not(check_person_has_current_relationship(person) and check_person_has_past_marraige(person)):
+        try:
+            big5_buckets[original_big_5_key][age_key].remove(person)
+        except: pass
+        
+        try:
+            big5_buckets[big_5_key][currently_searching_age_bucket_index].remove(p)
+        except: pass
 
 
 
 
 def match_people(people, age_buckets, big5_buckets):
-    for big_5_key, bucket in big5_buckets.items():
-         for age_key, age_bucket in bucket.items():
+    for big_5_key, big_5_bucket in big5_buckets.items():
+         for age_key, age_bucket in big_5_bucket.items():
              for person in age_bucket:
                 if check_person_has_current_relationship(person):
                     recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, 0, False)
+                elif check_person_has_past_marraige(person):
+                    recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, 0, True)
 
+    pass
 
     age = []
     for j in people:  # Looping through the range of how_many_people_to_generate

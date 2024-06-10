@@ -1,6 +1,6 @@
 {
     "generation": {
-        "how_many_people_to_generate": 1000,
+        "how_many_people_to_generate": 100,
         "recursive_relationship_limit": 4
     },
     "start_date": {
