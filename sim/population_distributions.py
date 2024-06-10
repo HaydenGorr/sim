@@ -13,12 +13,12 @@ IQ_DIST = None
 def generate_age_distribution(population_size):
     # Define parameters for age groups
     children_mean, children_std = 10, 5
-    young_adult_mean, young_adult_std = 35, 10
-    adults_mean, adults_std = 50, 10
+    young_adult_mean, young_adult_std = 30, 15
+    adults_mean, adults_std = 50, 15
     seniors_mean, seniors_std = 70, 10
 
     # Proportion of each age group in the population
-    children_prop, young_adult_prop, adults_prop, seniors_prop = 0.20, 0.25, 0.25, 0.20
+    children_prop, young_adult_prop, adults_prop, seniors_prop = 0.15, 0.35, 0.25, 0.20
 
     # Generate ages for each group
     children = np.random.normal(children_mean, children_std, int(population_size * children_prop))

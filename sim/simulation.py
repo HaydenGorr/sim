@@ -5,6 +5,10 @@ from sim.person.person_utils import link_2_people_in_relationship, check_person_
 from sim.person.person import Person
 import random
 import numpy as np
+import bisect
+
+age_ranges = [18, 21, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100]
+big5_traits = ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"]
 
 def generate_people():
     how_many_people_to_generate = CONF.how_many_people_to_generate
@@ -14,95 +18,105 @@ def generate_people():
     FN, LN = generate_names(how_many_people_to_generate)
 
     people = []
-    link_relationships = []
+    big5_buckets = {trait: {age: [] for age in age_ranges} for trait in big5_traits}
 
-    # What are links?
-    #
-    #   When we generate someone we randomly decide if they've been in a relationship or not.
-    #   If they are in or have been in a relatinoship we need to generate a "link" - a person
-    #   who they will link to for their current or past relationship. We have to do this recursively.
-    #
-    #   If we need a "link" to fill a relationship, that link may have had a past marraige that we need
-    #   to link, and that past marraige partner may have a current relationship which needs linking, and on and on.
-    #   But we limit this potentioally infinite recursion with the vars: links and link_limit
-    #
-    #   links is the var that counts how many times we've had to create a "link" in succession
-    #   and link_limit will stop this recusion once links hits the limit.
-    #
-    links = 0
-    link_limit = CONF.recursive_relationship_limit
+    age_buckets = {18: [], 21: [], 25: [], 30: [], 35: [], 40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [], 80: [], 85: [], 90: [], 100: []}
+    # big5_buckets = {"openness":[], "conscientiousness":[], "extraversion":[], "agreeableness":[], "neuroticism":[]}
 
-    j = 0
+    for x in range(CONF.how_many_people_to_generate):
+        newPerson = Person(firstName=FN[x%len(FN)], lastName=LN[x%len(FN)], age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=random.choice([True, False]))
 
-    while(j < how_many_people_to_generate):
-
-        for LR in link_relationships:
-            link_index = LR[0]
-            type = LR[0]
-
-            # Generate someone
-            newly_created_person = Person(firstName=FN[j%len(FN)], lastName=LN[j%len(FN)], age=people[link_index].age + random.uniform(-5, 5), male_sex=not people[link_index].male_sex)
-            people.append(newly_created_person)
-
-            if (type == "CR"):
-                relationship_type = people[link_index].relationship[0]
-                link_2_people_in_relationship(newly_created_person, people[link_index], relationship_type)
-
-                # if we've reached maximum links then stop the links here
-                if (links >= link_limit): remove_past_marraige(newly_created_person)
-                # If we have space for more links, then let's create a new person for this link next loop
-                elif check_person_has_past_marraige(newly_created_person):
-                    link_relationships.append([j, "PM"])
-                    links+=1
-
-                j+=1
-
-            elif (type == "PM"):
-                what_happened_to_the_relationship = people[link_index].pastMarraiges[0]
-                link_2_people_in_past_marraige(newly_created_person, people[link_index], what_happened_to_the_relationship)
-
-                # if we've reached maximum links then stop the links here
-                if (links >= link_limit): remove_relationship(newly_created_person)
-                # If we have space for more links, then let's create a new person for this link next loop
-                elif check_person_has_current_relationship(newly_created_person):
-                    link_relationships.append([j, "CR"])
-                    links+=1
-
-                j+=1
-
-        # reset links
-        link_relationships = []
-        links = 0
-
-        newPerson = Person(firstName=FN[j%len(FN)], lastName=LN[j%len(FN)], age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=random.choice([True, False]))
-        assert(newPerson.relationship is not None)
         people.append(newPerson)
-        
-        #
-        if check_person_has_past_marraige(newPerson): link_relationships.append([j, 'PM'])
-        if check_person_has_current_relationship(newPerson): link_relationships.append([j, 'CR'])
 
-        j+=1
-        if (j >= how_many_people_to_generate): break
+        # We use the age and big5 buckets to facilitate relationship matching after
+        # if the new person as no relationship, we don't need them in the buckets
+        if (not check_person_has_current_relationship(newPerson) and not check_person_has_past_marraige(newPerson)): continue
+
+        age_bucket_key = 0
+
+        for idx, key in enumerate(age_buckets):
+            if (newPerson.age <= key):
+                age_bucket_key = key
+                age_buckets[key].append(newPerson)
+                break
+
+        value, name = newPerson.getMostProminentBig5()
+        big5_buckets[name][age_bucket_key].append(newPerson)
+
+    return people, age_buckets, big5_buckets
+
+def recursive_match(person,  big_5_key, age_key, big5_buckets, age_buckets, continuous_linking, past):
+
+    original_big_5_key = big_5_key
+
+    # Adjust for neurotic people
+    # If the person is neurotic, they'll want someone understanding and conscientious
+    if (big_5_key == "neuroticism"): big_5_key = "conscientiousness"
+
+    bucket_indx = age_ranges.index(age_key)
+    younger_bucket = age_ranges[bucket_indx - (1 if (bucket_indx > 1) else 0)]
+    older_bucket = age_ranges[bucket_indx + (1 if (age_ranges.index(age_key) < 17) else 0)]
+    if (past):
+        younger_bucket2 = age_ranges[bucket_indx - (2 if (bucket_indx > 2) else 0)]
+        older_bucket2 = age_ranges[bucket_indx + (2 if (age_ranges.index(age_key) < 16) else 0)]
+
+    bucket_search_order = []
+    # This simulates women looking for older men and men looking for younger women
+    # The age gap is only by 1 bucket, so the dispersion of ages will never be huge
+    if (person.male_sex): bucket_search_order = [age_key, younger_bucket, older_bucket]
+    else: bucket_search_order = [age_key, older_bucket, younger_bucket]
+
+    # past is true if the relationship we're matching was a past marraige
+    # in this case, we look through a random personality bucket and less than 
+    # ideal age buckets
+    if (past):
+        bucket_search_order.append(younger_bucket2)
+        bucket_search_order.append(older_bucket2)
+        bucket_search_order.reverse()
+        big_5_key = random.choice(big5_traits)
+
+
+    matched = False
+    currently_searching_age_bucket_index = None
+
+    for currently_searching_age_bucket_index in bucket_search_order:
+        currently_searching_bucket = big5_buckets[big_5_key][currently_searching_age_bucket_index]
+        for p in currently_searching_bucket:
+            if p.male_sex == person.male_sex: continue
+            if p is person: continue
+            if not past and not check_person_has_current_relationship(p): continue
+            link_2_people_in_relationship(person, p, person.relationship[0])
+            
+
+            value, name = p.getMostProminentBig5()
+            if not past and check_person_has_past_marraige(p):
+                recursive_match(p, name, currently_searching_age_bucket_index, big5_buckets, age_buckets, continuous_linking + 1, True)
+            elif past and check_person_has_current_relationship(p):
+                recursive_match(p, name, currently_searching_age_bucket_index, big5_buckets, age_buckets, continuous_linking + 1, False)
+
+
+            matched = True
+            break
+        if matched: break
+
+    if not matched: remove_relationship(person)
+    else:
+        big5_buckets[original_big_5_key][age_key].remove(person)
+        big5_buckets[big_5_key][currently_searching_age_bucket_index].remove(p)
+
+
+
+
+
+def match_people(people, age_buckets, big5_buckets):
+    for big_5_key, bucket in big5_buckets.items():
+         for age_key, age_bucket in bucket.items():
+             for person in age_bucket:
+                if check_person_has_current_relationship(person):
+                    recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, 0, False)
 
 
     age = []
     for j in people:  # Looping through the range of how_many_people_to_generate
         print(j.age)
         age.append(j.age)
-
-
-    # Step 1: Count the frequencies
-    # frequency = collections.Counter(age)
-
-    # # Step 2: Visualize the frequencies
-    # plt.figure(figsize=(10, 6))
-    # plt.bar(frequency.keys(), frequency.values(), color='skyblue')
-    # plt.xlabel('Numbers')
-    # plt.ylabel('Frequency')
-    # plt.title('Frequency of Numbers in Array')
-    # plt.xticks(list(frequency.keys()))
-    # plt.grid(axis='y')
-
-    # # Show the plot
-    # plt.show()
