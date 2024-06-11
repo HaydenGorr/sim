@@ -99,8 +99,6 @@ def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, conti
         big5_searchable_containers = ["conscientiousness", "openness", "extraversion", "agreeableness", "neuroticism"]
         random.shuffle(big5_searchable_containers)
 
-
-
     matched = False
     currently_searching_age_bucket_index = None
 
@@ -144,13 +142,6 @@ def match_people(people, age_buckets, big5_buckets):
                     recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, 0, False)
                 if check_person_has_past_marraige(person) and person.pastMarraiges[1] is None and person.pastMarraiges[0] != "widowed":
                     recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, 0, True)
-
-    pass
-
-    age = []
-    for j in people:  # Looping through the range of how_many_people_to_generate
-        print(j.age)
-        age.append(j.age)
 
 def generate_decased_partners(widowed_people):
     deceased_people = []
