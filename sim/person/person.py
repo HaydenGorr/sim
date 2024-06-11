@@ -75,7 +75,12 @@ def isDivorced(age, agreeableness, openness):
 
 class Person:
 
-    def __init__(self, firstName, lastName, age=-1, male_sex=False, person_ref=None):
+    def __repr__(self):
+        return f"MyObject({self.age})"
+
+    def __init__(self, firstName, lastName, age=-1, male_sex=False, alive=True):
+
+        self.alive = alive
 
         # Personality
         self.openness = np.random.choice(popDist.generate_normal_dist(50, 25))
@@ -110,6 +115,23 @@ class Person:
         assert isinstance(person, Person) or person is None, "Argument must be an instance of Person or None"
         self.pastMarraiges = [what_happened_to_the_relationship, person]
 
+    def getMostProminentBig5(self):
+        name = "openness"
+        value = self.openness
+        if (value < self.conscientiousness):
+            value = self.conscientiousness
+            name="conscientiousness"
+        if (value < self.extraversion):
+            value = self.extraversion
+            name="extraversion"
+        if (value < self.agreeableness):
+            value = self.agreeableness
+            name="agreeableness"
+        if (value < self.neuroticism):
+            value = self.neuroticism
+            name="neuroticism"
+
+        return value, name
 
 
 # Define a function to adjust aggression based on age
