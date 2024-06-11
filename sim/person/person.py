@@ -4,6 +4,7 @@ import datetime
 import math
 from dateutil.relativedelta import relativedelta
 from config import CONF
+from sim.person.person_utils import getProfeciencyAndEnjoyment
 
 # age is a random float generated between 0 - 100
 # we use the first 2 sig figs to get birth date
@@ -96,7 +97,8 @@ class Person:
         self.birthday = getBirthday(age)
         self.age = abs(relativedelta(self.birthday, datetime.datetime(CONF.start_date.year, CONF.start_date.month, CONF.start_date.day))).years
         self.iq = math.floor(np.random.choice(popDist.IQ_DIST))
-        
+        self.creativity = math.floor(np.random.choice(popDist.IQ_DIST)) + (self.iq - 100) * 0.5 # adjusted by intelligence
+
         self.relationship = None
         initialise_Relationship(self) # 0=single, 1=relationship, 2=married
         assert(self.relationship is not None)
@@ -106,7 +108,6 @@ class Person:
 
         #LIKES
         self.hobbies = [] # list of hobbies
-
 
     def setRelationship(self, relationship, person):
         assert(relationship in ["single", "relationship", "marraige"])
@@ -120,8 +121,14 @@ class Person:
         self.pastMarraiges = [what_happened_to_the_relationship, person]
 
     def addHobbies(self, inHobbies):
-        self.hobbies = inHobbies
+        hobbies_to_add = []
+        for hobbyName, hobbyData in inHobbies:
+            profeciency, enjoyment, reason_for_performance = getProfeciencyAndEnjoyment(hobbyName, self)
 
+            hobbies_to_add.append((hobbyName, profeciency, enjoyment))
+
+        self.hobbies.extend(hobbies_to_add)
+        
     def getMostProminentBig5(self):
         name = "openness"
         value = self.openness
@@ -152,7 +159,6 @@ def adjust_aggression_for_age(aggression, age):
     scale_factor = max_scale - ((age - min_age) / (max_age - min_age)) * (max_scale - min_scale)
     
     return aggression * scale_factor
-
 
 def link_2_people_in_relationship(p1, p2, relationship_type):
     p1.setRelationship(relationship_type, p2)

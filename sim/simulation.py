@@ -1,6 +1,6 @@
 import sim.population_distributions as popDist
 from config import CONF, config
-from helpers import generate_names, load_json_array
+from helpers import load_json_array
 from sim.person.person_utils import link_2_people_in_relationship, check_person_has_past_marraige, check_person_has_current_relationship, remove_past_marraige, remove_relationship, link_2_people_in_past_marraige
 from sim.person.person import Person
 import random
@@ -13,12 +13,10 @@ age_ranges = [18, 21, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 10
 big5_traits = ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"]
 
 def generate_people():
-    hobby_master_list = load_json_array(os.path.join('resources', 'hobbies.json'))
+    hobby_master_list = load_json_array(os.path.join('resources', 'hobbies_exp.json'))
     how_many_people_to_generate = CONF.how_many_people_to_generate
 
     popDist.initialise(population_size=how_many_people_to_generate)
-
-    FN, LN = generate_names(how_many_people_to_generate)
 
     widowed = [] # store refs to widowers here so we can generate deceased partners later
     people = []
@@ -29,7 +27,8 @@ def generate_people():
         is_male = random.choice([True, False])
         newPerson = Person(firstName=names.get_first_name('male' if is_male else 'female'), lastName=names.get_first_name('male' if is_male else 'female'), age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=is_male)
 
-        newPerson.addHobbies(random.choices(hobby_master_list, k=random.randint(1, 5)))
+        random_selection = random.sample(list(hobby_master_list.items()), k=random.randint(1, 5))
+        newPerson.addHobbies(random_selection)
 
         people.append(newPerson)
 
@@ -138,7 +137,6 @@ def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, conti
             big5_buckets[original_big_5_key][age_key].remove(person)
 
 def match_people(people, age_buckets, big5_buckets):
-    
     for big_5_key, big_5_bucket in big5_buckets.items():
          for age_key, age_bucket in big_5_bucket.items():
              for person in age_bucket:
@@ -163,4 +161,6 @@ def generate_decased_partners(widowed_people):
         remove_relationship(dead_person)
         link_2_people_in_past_marraige(widower, dead_person, "widowed")
         deceased_people.append(dead_person)
+
+    return deceased_people
 
