@@ -104,6 +104,10 @@ class Person:
         self.relationship_strength = (None if self.relationship == 0 else np.random.choice(popDist.generate_normal_dist(60, 10)))
         self.pastMarraiges = isDivorced(self.age, self.agreeableness, self.openness) # never divorced, divorced, widowed
 
+        #LIKES
+        self.hobbies = [] # list of hobbies
+
+
     def setRelationship(self, relationship, person):
         assert(relationship in ["single", "relationship", "marraige"])
         assert isinstance(person, Person) or person is None, "Argument must be an instance of Person or None"
@@ -114,6 +118,9 @@ class Person:
         assert(what_happened_to_the_relationship in ["no change", "divorced", "widowed"])
         assert isinstance(person, Person) or person is None, "Argument must be an instance of Person or None"
         self.pastMarraiges = [what_happened_to_the_relationship, person]
+
+    def addHobbies(self, inHobbies):
+        self.hobbies = inHobbies
 
     def getMostProminentBig5(self):
         name = "openness"

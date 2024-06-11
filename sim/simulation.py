@@ -1,17 +1,19 @@
 import sim.population_distributions as popDist
 from config import CONF, config
-from helpers import generate_names
+from helpers import generate_names, load_json_array
 from sim.person.person_utils import link_2_people_in_relationship, check_person_has_past_marraige, check_person_has_current_relationship, remove_past_marraige, remove_relationship, link_2_people_in_past_marraige
 from sim.person.person import Person
 import random
 import numpy as np
 import bisect
 import names
+import os
 
 age_ranges = [18, 21, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100]
 big5_traits = ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"]
 
 def generate_people():
+    hobby_master_list = load_json_array(os.path.join('resources', 'hobbies.json'))
     how_many_people_to_generate = CONF.how_many_people_to_generate
 
     popDist.initialise(population_size=how_many_people_to_generate)
@@ -26,6 +28,8 @@ def generate_people():
     for x in range(CONF.how_many_people_to_generate):
         is_male = random.choice([True, False])
         newPerson = Person(firstName=names.get_first_name('male' if is_male else 'female'), lastName=names.get_first_name('male' if is_male else 'female'), age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=is_male)
+
+        newPerson.addHobbies(random.choices(hobby_master_list, k=random.randint(1, 5)))
 
         people.append(newPerson)
 

@@ -17,3 +17,10 @@ def link_2_people_in_relationship(p1, p2, relationship_type):
 def link_2_people_in_past_marraige(p1, p2, what_happened_to_the_relationship):
     p1.setPastMarriage(what_happened_to_the_relationship, p2)
     p2.setPastMarriage(what_happened_to_the_relationship, p1)
+
+def calculate_relationship_strength(all_people):
+    for person1 in all_people:
+        person2 = person1.relationship[1]
+        if person2 is none: continue
+
+        

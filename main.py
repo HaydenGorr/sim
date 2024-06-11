@@ -6,7 +6,7 @@ from config import CONF
 import sys
 import os
 from helpers import relationship_linking_sanity_check
-
+from sim.person.person_utils import calculate_relationship_strength
 
 if __name__ == "__main__":
     if (not CONF.valid):
@@ -17,10 +17,10 @@ if __name__ == "__main__":
         peopleNumber = int(sys.argv[1])  # Convert the first argument to an integer
         CONF.generation.how_many_people_to_generate = peopleNumber
 
-    people, age_buckets, big5_buckets, widowers = generate_people()
+    all_people, age_buckets, big5_buckets, widowers = generate_people()
     deceased_people = generate_decased_partners(widowers)
-    match_people(people, age_buckets, big5_buckets)
-
-    relationship_linking_sanity_check(people)
+    match_people(all_people, age_buckets, big5_buckets)
+    calculate_relationship_strength(all_people)
+    relationship_linking_sanity_check(all_people)
 
     pass
