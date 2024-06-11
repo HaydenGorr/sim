@@ -21,9 +21,40 @@ def link_2_people_in_past_marraige(p1, p2, what_happened_to_the_relationship):
     p2.setPastMarriage(what_happened_to_the_relationship, p1)
 
 def calculate_relationship_strength(all_people):
+    from config import CONF
+    
     for person1 in all_people:
+        if person1.relationship_strength != -1: continue 
         person2 = person1.relationship[1]
         if person2 is None: continue
+    
+        h_op = abs(person1.openness - person2.openness)
+        h_co = abs(person1.conscientiousness - person2.conscientiousness)
+        h_ne = abs(person1.neuroticism - person2.neuroticism)
+        h_ex = abs(person1.extraversion - person2.extraversion)
+        h_ag = abs(person1.agreeableness - person2.agreeableness)
+        
+        average_compatability = (h_op + h_co + h_ne + h_ex + h_ag) / 5
+        iq_diff = abs(person1.iq - person2.iq)
+        iq_modifier = math.floor(iq_diff/15) 
+        
+        common_hobbies = []
+        for hobby in person1.hobbies:
+            for hobby2 in person2.hobbies:
+                if hobby[0] == hobby2[0]:
+                    common_hobbies.append(hobby)
+                    
+                    
+        a = (100 - average_compatability)
+        b = (iq_modifier * 10)
+        c = (common_hobbies * 5)
+        d = -20 if len(common_hobbies) == 0 else 0
+                    
+        aggregated_compaitability1 = min(100, (100 - average_compatability) - (iq_modifier * 10) + (len(common_hobbies) * 5) + (-25 if len(common_hobbies) == 0 else 0))
+        
+        person1.relationship_strength = aggregated_compaitability1
+        person2.relationship_strength = aggregated_compaitability1
+        
 
 # Tells us how much an activity suits the person's personality
 # and how good the person is at it
@@ -116,12 +147,11 @@ def convert_profeciency_to_string(profeciency_score):
     elif (profeciency_score == -1): return "under performance"
     elif (profeciency_score == -2): return "bad performance"
     elif (profeciency_score == -3): return "terrible performance"
+    elif (profeciency_score == -3): return "terrible performance"
     elif (profeciency_score == -6): return "incapable"
 
-
-
-
-
+        
+    
 
 
 

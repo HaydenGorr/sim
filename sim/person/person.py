@@ -85,8 +85,8 @@ class Person:
 
         # Personality
         self.openness = np.random.choice(popDist.generate_normal_dist(50, 25))
-        self.conscientiousness = np.random.choice(popDist.generate_normal_dist(50, 15))
-        self.extraversion = np.random.choice(popDist.generate_normal_dist(50, 15)) + (5 if male_sex else 0)
+        self.conscientiousness = np.random.choice(popDist.generate_normal_dist(50, 25))
+        self.extraversion = np.random.choice(popDist.generate_normal_dist(50, 30)) + (5 if male_sex else 0)
         self.agreeableness = np.random.choice(popDist.generate_normal_dist(50, 25)) + (0 if male_sex else 5)
         self.neuroticism = np.random.choice(popDist.generate_normal_dist(50, 15))
 
@@ -103,7 +103,7 @@ class Person:
         initialise_Relationship(self) # 0=single, 1=relationship, 2=married
         assert(self.relationship is not None)
 
-        self.relationship_strength = (None if self.relationship == 0 else np.random.choice(popDist.generate_normal_dist(60, 10)))
+        self.relationship_strength = -1
         self.pastMarraiges = isDivorced(self.age, self.agreeableness, self.openness) # never divorced, divorced, widowed
 
         #LIKES
