@@ -44,7 +44,8 @@ def generate_people():
         value, name = newPerson.getMostProminentBig5()
         big5_buckets[name][age_bucket_key].append(newPerson)
 
-        if (check_person_has_past_marraige(newPerson) and newPerson.pastMarraiges[0] == "widowed"): widowed.append(newPerson)
+        if (check_person_has_past_marraige(newPerson) and newPerson.pastMarraiges[0] == "widowed"):
+            widowed.append(newPerson)
 
     return people, age_buckets, big5_buckets, widowed
 
@@ -58,6 +59,8 @@ def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, conti
         if (past): remove_past_marraige(person)
         else: remove_relationship(person)
         return
+    
+    if (past and check_person_has_past_marraige(person) and person.pastMarraiges[0] == "widowed"): return
 
     # We need to store this because we reassign big_5_key under some conditions. Bad code, I know
     original_big_5_key = big_5_key
@@ -131,6 +134,7 @@ def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, conti
             big5_buckets[original_big_5_key][age_key].remove(person)
 
 def match_people(people, age_buckets, big5_buckets):
+    
     for big_5_key, big_5_bucket in big5_buckets.items():
          for age_key, age_bucket in big_5_bucket.items():
              for person in age_bucket:
@@ -145,3 +149,14 @@ def match_people(people, age_buckets, big5_buckets):
     for j in people:  # Looping through the range of how_many_people_to_generate
         print(j.age)
         age.append(j.age)
+
+def generate_decased_partners(widowed_people):
+    deceased_people = []
+    for widower in widowed_people:
+        if (widower.pastMarraiges[0]!="widowed"): continue
+        dead_person = Person(firstName=names.get_first_name('female' if widower.male_sex else 'male'), lastName=names.get_first_name('female' if widower.male_sex else 'male'), age=widower.age + (random.choice(range(-5, 5))), male_sex=not widower.male_sex)
+        dead_person.alive = False
+        remove_relationship(dead_person)
+        link_2_people_in_past_marraige(widower, dead_person, "widowed")
+        deceased_people.append(dead_person)
+

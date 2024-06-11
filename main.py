@@ -1,11 +1,11 @@
 import os
 from config import createCONF
 createCONF(os.path.join('config.json'))
-from sim.simulation import generate_people, match_people
+from sim.simulation import generate_people, match_people, generate_decased_partners
 from config import CONF
 import sys
 import os
-from sim.person.person_utils import check_person_has_past_marraige, check_person_has_current_relationship
+from helpers import relationship_linking_sanity_check
 
 
 if __name__ == "__main__":
@@ -17,16 +17,10 @@ if __name__ == "__main__":
         peopleNumber = int(sys.argv[1])  # Convert the first argument to an integer
         CONF.generation.how_many_people_to_generate = peopleNumber
 
-    people, age_buckets, big5_buckets, widowed = generate_people()
+    people, age_buckets, big5_buckets, widowers = generate_people()
+    deceased_people = generate_decased_partners(widowers)
     match_people(people, age_buckets, big5_buckets)
 
-    pass
-
-    for person in people:
-        if check_person_has_current_relationship(person):
-            assert(person.relationship[1] is not None)
-
-        if check_person_has_past_marraige(person) and person.pastMarraiges[0] != "widowed":
-            assert(person.pastMarraiges[1] is not None)
+    relationship_linking_sanity_check(people)
 
     pass
