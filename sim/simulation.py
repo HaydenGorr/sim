@@ -6,6 +6,7 @@ from sim.person.person import Person
 import random
 import numpy as np
 import bisect
+import names
 
 age_ranges = [18, 21, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 100]
 big5_traits = ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"]
@@ -17,14 +18,14 @@ def generate_people():
 
     FN, LN = generate_names(how_many_people_to_generate)
 
+    widowed = [] # store refs to widowers here so we can generate deceased partners later
     people = []
     big5_buckets = {trait: {age: [] for age in age_ranges} for trait in big5_traits}
-
     age_buckets = {18: [], 21: [], 25: [], 30: [], 35: [], 40: [], 45: [], 50: [], 55: [], 60: [], 65: [], 70: [], 75: [], 80: [], 85: [], 90: [], 100: []}
-    # big5_buckets = {"openness":[], "conscientiousness":[], "extraversion":[], "agreeableness":[], "neuroticism":[]}
 
     for x in range(CONF.how_many_people_to_generate):
-        newPerson = Person(firstName=FN[x%len(FN)], lastName=LN[x%len(FN)], age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=random.choice([True, False]))
+        is_male = random.choice([True, False])
+        newPerson = Person(firstName=names.get_first_name('male' if is_male else 'female'), lastName=names.get_first_name('male' if is_male else 'female'), age=np.random.choice(popDist.AGE_DIST, size=1), male_sex=is_male)
 
         people.append(newPerson)
 
@@ -43,8 +44,14 @@ def generate_people():
         value, name = newPerson.getMostProminentBig5()
         big5_buckets[name][age_bucket_key].append(newPerson)
 
-    return people, age_buckets, big5_buckets
+        if (check_person_has_past_marraige(newPerson) and newPerson.pastMarraiges[0] == "widowed"): widowed.append(newPerson)
 
+    return people, age_buckets, big5_buckets, widowed
+
+# I thought the recusion wasn't important any more after several refactors, but don't remove the recusion,
+# it facilitates link limiting, where we ensure more that a relationship chain of people dating and breaking up
+# doesn't go on forever. Removing recusion means there can be an arbritrarily long chain of people dating
+# Person a dates person b who dates person c who dated person d and on and on, that's a relationship chain
 def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, continuous_linking, past):
 
     if (continuous_linking >= CONF.recursive_relationship_limit): 
@@ -52,11 +59,15 @@ def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, conti
         else: remove_relationship(person)
         return
 
+    # We need to store this because we reassign big_5_key under some conditions. Bad code, I know
     original_big_5_key = big_5_key
 
     # Adjust for neurotic people
     # If the person is neurotic, they'll want someone understanding and conscientious
     if (big_5_key == "neuroticism"): big_5_key = "conscientiousness"
+
+    # If we're not searching past 
+    big5_searchable_containers = [big_5_key]
 
     bucket_indx = age_ranges.index(age_key)
     younger_bucket = age_ranges[bucket_indx - (1 if (bucket_indx > 1) else 0)]
@@ -77,33 +88,39 @@ def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, conti
     if (past):
         bucket_search_order.append(younger_bucket2)
         bucket_search_order.append(older_bucket2)
-        bucket_search_order.reverse()
+        random.shuffle(bucket_search_order)
         big_5_key = random.choice(big5_traits)
+        big5_searchable_containers = ["conscientiousness", "openness", "extraversion", "agreeableness", "neuroticism"]
+        random.shuffle(big5_searchable_containers)
+
 
 
     matched = False
     currently_searching_age_bucket_index = None
 
     for currently_searching_age_bucket_index in bucket_search_order:
-        currently_searching_bucket = big5_buckets[big_5_key][currently_searching_age_bucket_index]
-        for p in currently_searching_bucket:
-            if p.male_sex == person.male_sex: continue
-            if p is person: continue
-            if not past and not check_person_has_current_relationship(p): continue
-            if (past and not check_person_has_past_marraige(p)): continue
+        for big5 in big5_searchable_containers:
+            currently_searching_bucket = big5_buckets[big5][currently_searching_age_bucket_index]
+            for p in currently_searching_bucket:
+                if p.male_sex == person.male_sex: continue
+                if p is person: continue
+                if not past and not check_person_has_current_relationship(p): continue # looking for current relationship and the person isn't in a relationship
+                if (past and not check_person_has_past_marraige(p)): continue # if looking for past marraige partner and person hasn't had a past marraige
+                if (not past and p.relationship[1] is not None): continue # if looking for current relationship and the person hsa already had a relationship set
+                if (past and p.pastMarraiges[1] is not None): continue # if looking for past marraige partner and the person has already had a past marraige set
 
-            if not past: link_2_people_in_relationship(person, p, person.relationship[0])
-            else: link_2_people_in_past_marraige(person, p, person.pastMarraiges[0])
+                if not past: link_2_people_in_relationship(person, p, person.relationship[0])
+                else: link_2_people_in_past_marraige(person, p, person.pastMarraiges[0])
 
-            value, name = p.getMostProminentBig5()
-            if not past and check_person_has_past_marraige(p):
-                recursive_match(p, name, currently_searching_age_bucket_index, big5_buckets, age_buckets, continuous_linking + 1, True)
-            elif past and check_person_has_current_relationship(p):
-                recursive_match(p, name, currently_searching_age_bucket_index, big5_buckets, age_buckets, continuous_linking + 1, False)
+                value, name = p.getMostProminentBig5()
+                if not past and check_person_has_past_marraige(p) and p.pastMarraiges[0] != "widowed":
+                    recursive_match(p, name, currently_searching_age_bucket_index, big5_buckets, age_buckets, continuous_linking + 1, True)
+                elif past and check_person_has_current_relationship(p):
+                    recursive_match(p, name, currently_searching_age_bucket_index, big5_buckets, age_buckets, continuous_linking + 1, False)
 
-            matched = True
+                matched = True
 
-            break
+                break
         if matched: break
 
     if not matched:
@@ -112,26 +129,14 @@ def recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, conti
 
         if check_person_has_current_relationship(person) and check_person_has_past_marraige(person): 
             big5_buckets[original_big_5_key][age_key].remove(person)
-    
-    if matched or not(check_person_has_current_relationship(person) and check_person_has_past_marraige(person)):
-        try:
-            big5_buckets[original_big_5_key][age_key].remove(person)
-        except: pass
-        
-        try:
-            big5_buckets[big_5_key][currently_searching_age_bucket_index].remove(p)
-        except: pass
-
-
-
 
 def match_people(people, age_buckets, big5_buckets):
     for big_5_key, big_5_bucket in big5_buckets.items():
          for age_key, age_bucket in big_5_bucket.items():
              for person in age_bucket:
-                if check_person_has_current_relationship(person):
+                if check_person_has_current_relationship(person) and person.relationship[1] is None:
                     recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, 0, False)
-                elif check_person_has_past_marraige(person):
+                if check_person_has_past_marraige(person) and person.pastMarraiges[1] is None and person.pastMarraiges[0] != "widowed":
                     recursive_match(person, big_5_key, age_key, big5_buckets, age_buckets, 0, True)
 
     pass

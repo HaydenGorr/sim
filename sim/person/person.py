@@ -78,7 +78,9 @@ class Person:
     def __repr__(self):
         return f"MyObject({self.age})"
 
-    def __init__(self, firstName, lastName, age=-1, male_sex=False, person_ref=None):
+    def __init__(self, firstName, lastName, age=-1, male_sex=False, alive=True):
+
+        self.alive = alive
 
         # Personality
         self.openness = np.random.choice(popDist.generate_normal_dist(50, 25))
