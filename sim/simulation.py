@@ -13,7 +13,7 @@ age_ranges = [18, 21, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 10
 big5_traits = ["openness", "conscientiousness", "extraversion", "agreeableness", "neuroticism"]
 
 def generate_people():
-    hobby_master_list = load_json_array(os.path.join('resources', 'hobbies_exp.json'))
+    hobby_master_list = load_json_array(os.path.join('resources', 'hobbies.json'))
     how_many_people_to_generate = CONF.how_many_people_to_generate
 
     popDist.initialise(population_size=how_many_people_to_generate)

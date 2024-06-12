@@ -43,17 +43,15 @@ def calculate_relationship_strength(all_people):
             for hobby2 in person2.hobbies:
                 if hobby[0] == hobby2[0]:
                     common_hobbies.append(hobby)
+
+        expectation_diff = person1.expectations - person2.expectations > 0
+        expectation_modifier = (expectation_diff/15)
                     
-                    
-        a = (100 - average_compatability)
-        b = (iq_modifier * 10)
-        c = (common_hobbies * 5)
-        d = -20 if len(common_hobbies) == 0 else 0
-                    
-        aggregated_compaitability1 = min(100, (100 - average_compatability) - (iq_modifier * 10) + (len(common_hobbies) * 5) + (-25 if len(common_hobbies) == 0 else 0))
+        #aggregated_compaitability = min(100, (100 - average_compatability) - (iq_modifier * 10) + (len(common_hobbies) * 5) + (-25 if len(common_hobbies) == 0 else 0))
+        aggregated_compaitability = min(100, (100 - average_compatability) - (iq_modifier * 10) + (len(common_hobbies) * 5) + (expectation_modifier * 10))
         
-        person1.relationship_strength = aggregated_compaitability1
-        person2.relationship_strength = aggregated_compaitability1
+        person1.relationship_strength = aggregated_compaitability
+        person2.relationship_strength = aggregated_compaitability
         
 
 # Tells us how much an activity suits the person's personality
