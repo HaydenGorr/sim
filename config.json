@@ -1,11 +1,14 @@
 {
     "generation": {
-        "how_many_people_to_generate": 1000,
+        "how_many_people_to_generate": 200,
         "recursive_relationship_limit": 4
     },
     "start_date": {
         "year": 1997,
         "month": 1,
         "day": 1
-    }
+    },
+    "city_sizex": 10,  
+    "city_sizey": 10,
+    "city_sizez": 10
 }

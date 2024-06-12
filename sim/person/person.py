@@ -1,3 +1,4 @@
+from locale import currency
 import numpy as np
 import sim.population_distributions as popDist
 import datetime
@@ -5,6 +6,7 @@ import math
 from dateutil.relativedelta import relativedelta
 from config import CONF
 from sim.person.person_utils import getProfeciencyAndEnjoyment
+from typing import List, Dict, Tuple
 
 # age is a random float generated between 0 - 100
 # we use the first 2 sig figs to get birth date
@@ -72,7 +74,7 @@ def isDivorced(age, agreeableness, openness):
 
     new_probabilities = [nothing_adjusted, divorced_adjusted, widowed_adjusted]
 
-    return [np.random.choice(["no change", "divorced", "widowed"], p=new_probabilities), None]
+    return (np.random.choice(["no change", "divorced", "widowed"], p=new_probabilities), None)
 
 class Person:
 
@@ -81,33 +83,69 @@ class Person:
 
     def __init__(self, firstName, lastName, age=-1, male_sex=False, alive=True):
 
-        self.alive = alive
+        self.alive: bool = alive
 
         # Personality
-        self.openness = np.random.choice(popDist.generate_normal_dist(50, 25))
-        self.conscientiousness = np.random.choice(popDist.generate_normal_dist(50, 15))
-        self.extraversion = np.random.choice(popDist.generate_normal_dist(50, 15)) + (5 if male_sex else 0)
-        self.agreeableness = np.random.choice(popDist.generate_normal_dist(50, 25)) + (0 if male_sex else 5)
-        self.neuroticism = np.random.choice(popDist.generate_normal_dist(50, 15))
+        self.openness: float = np.random.choice(popDist.generate_normal_dist(50, 25))
+        self.conscientiousness: float = np.random.choice(popDist.generate_normal_dist(50, 25))
+        self.extraversion: float = np.random.choice(popDist.generate_normal_dist(50, 30)) + (5 if male_sex else 0)
+        self.agreeableness: float = np.random.choice(popDist.generate_normal_dist(50, 25)) + (0 if male_sex else 5)
+        self.neuroticism: float = np.random.choice(popDist.generate_normal_dist(50, 15))
 
         # FACTS
-        self.firstName = firstName
-        self.lastName = lastName
-        self.male_sex = male_sex
-        self.birthday = getBirthday(age)
-        self.age = abs(relativedelta(self.birthday, datetime.datetime(CONF.start_date.year, CONF.start_date.month, CONF.start_date.day))).years
-        self.iq = math.floor(np.random.choice(popDist.IQ_DIST))
-        self.creativity = math.floor(np.random.choice(popDist.IQ_DIST)) + (self.iq - 100) * 0.5 # adjusted by intelligence
+        self.firstName: str = firstName
+        self.lastName: str = lastName
+        self.male_sex:bool = male_sex
+        self.birthday: datetime = getBirthday(age)
+        self.age: int = abs(relativedelta(self.birthday, datetime.datetime(CONF.start_date.year, CONF.start_date.month, CONF.start_date.day))).years
+        self.iq: int = math.floor(np.random.choice(popDist.IQ_DIST))
+        self.creativity: int = math.floor(np.random.choice(popDist.IQ_DIST)) + (self.iq - 100) * 0.5 # adjusted by intelligence
 
-        self.relationship = None
-        initialise_Relationship(self) # 0=single, 1=relationship, 2=married
-        assert(self.relationship is not None)
+        #----------------
+        # CURRENT_RELATIONSHIP
+        #----------------
+        # # 0=single, 1=relationship, 2=married
+        self.relationship: Tuple[str, int] = None # the current relationship
+        initialise_Relationship(self) # called once to initialise it
+        self.relationship_strength = -1 # how well the relationship is going
 
-        self.relationship_strength = (None if self.relationship == 0 else np.random.choice(popDist.generate_normal_dist(60, 10)))
+        #----------------
+        # PAST MARRAIGES
+        #----------------
+        # currency, there can only be one past marraige
         self.pastMarraiges = isDivorced(self.age, self.agreeableness, self.openness) # never divorced, divorced, widowed
 
-        #LIKES
+        #----------------
+        # JOB
+        #----------------
+        self.job = None
+        self.pastJobs = [] # list of past jobs
+
+        #----------------
+        # LIKES
+        #----------------
+
+        # --- HOBBIES LIST
+        # --- A list of hobbies
         self.hobbies = [] # list of hobbies
+
+        # the level of expectations natural to this person
+        # --- EXPECTATIONS
+        # --- A number representing this person's expectations in life.
+        # it is primarily defined by age but is affected by iq, neuroticism and openness.
+        # update self.expectations with updateExpectations()
+        self.baseline_expectation = np.random.choice(range(-10,10)) # a random modifier to capture the unknown influences on a persons' expectations. Never changes
+        self.expectations: int = None
+        self.updateExpectations()
+
+
+    def updateExpectations(self):
+        age_expectations = popDist.sample_expectations(self.age)
+        neuroticism_modifier = (self.neuroticism*0.25)
+        openness_modifier = (self.openness * 0.25)
+        iq_modifier = (((self.iq - 100)/15) * 5)
+        self.expectations = min(100, age_expectations - neuroticism_modifier + openness_modifier + iq_modifier)
+
 
     def setRelationship(self, relationship, person):
         assert(relationship in ["single", "relationship", "marraige"])
@@ -146,6 +184,9 @@ class Person:
             name="neuroticism"
 
         return value, name
+
+    def simulate_day(self):
+        pass
 
 
 # Define a function to adjust aggression based on age

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import beta
+from scipy.stats import norm
 
 # alpha, beta_param = 3, 6
 
@@ -9,6 +9,7 @@ GENERIC_NORMAL_DIST = None
 RELATIONSHIP_PROBS = None
 DIVORCED_PROBS = None
 IQ_DIST = None
+x = None
 
 def generate_age_distribution(population_size):
     # Define parameters for age groups
@@ -41,6 +42,20 @@ def generate_normal_dist(mean, std_dev, clip=[0, 100]):
     # Truncate the values to stay within the range 0-100
     return np.clip(normal_levels, clip[0], clip[1])
 
+def generate_skewed_normal_dist(mean, std_dev, clip=[0, 100]):
+    y1 = norm.pdf(x, loc=20, scale=10) * 0.6
+    y2 = norm.pdf(x, loc=40, scale=15) * 0.3
+    y3 = norm.pdf(x, loc=70, scale=20) * 0.1
+
+    cdf = np.cumsum(y1 + y2 + y3)
+    cdf = cdf / cdf[-1]  # Normalize
+
+    # Generate random values
+    random_values = np.random.rand(1)
+    # Find the corresponding x values using the CDF
+    sampled_values = np.interp(random_values, cdf, x)
+    return sampled_values
+
 def initialise(population_size):
     global AGE_DIST
     global GENERIC_NORMAL_DIST
@@ -48,6 +63,9 @@ def initialise(population_size):
     global RELATIONSHIP_PROBS
     global DIVORCED_PROBS
     global IQ_DIST
+    global EXPECTATIONS_DIST
+    global x
+    x = np.linspace(0, 100, 100)
 
     AGE_DIST = generate_age_distribution(population_size)
 
@@ -78,6 +96,16 @@ def initialise(population_size):
 
     IQ_DIST = generate_normal_dist(100, 15, [0, 200])
 
+    x = np.linspace(0, 100, 100)
+    y1 = norm.pdf(x, loc=20, scale=10) * 0.6
+    y2 = norm.pdf(x, loc=40, scale=15) * 0.3
+    y3 = norm.pdf(x, loc=70, scale=20) * 0.1
+    y = y1 + y2 + y3
+    EXPECTATIONS_DIST = (y - np.min(y)) / (np.max(y) - np.min(y)) * 100
+    # EXPECTATIONS_DIST = y / y.sum()
+
+def sample_expectations(point):
+    return np.interp(point, x, EXPECTATIONS_DIST)
 
 def visualise(inDist):
     # Plot the distribution
