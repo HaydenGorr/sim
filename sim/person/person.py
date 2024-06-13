@@ -7,6 +7,8 @@ from dateutil.relativedelta import relativedelta
 from config import CONF
 from sim.person.person_utils import getProfeciencyAndEnjoyment
 from typing import List, Dict, Tuple
+from sim.person.job import job, MASTER_JOB
+
 
 # age is a random float generated between 0 - 100
 # we use the first 2 sig figs to get birth date
@@ -118,8 +120,8 @@ class Person:
         #----------------
         # JOB
         #----------------
-        self.job = None
-        self.pastJobs = [] # list of past jobs
+        self.job: job = None
+        self.pastJobs: List[job] = [] # list of past jobs
 
         #----------------
         # LIKES
@@ -138,6 +140,15 @@ class Person:
         self.expectations: int = None
         self.updateExpectations()
 
+    def addJob(self, inJob: MASTER_JOB):
+        if (self.job is not None):
+            self.pastJobs.append(self.job)
+
+        profeciency, enjoyment, reason_for_performance = getProfeciencyAndEnjoyment(inJob[0], self, "job")
+
+        self.job = job(inJob, CONF.current_date, None, profeciency, enjoyment, reason_for_performance)
+
+
 
     def updateExpectations(self):
         age_expectations = popDist.sample_expectations(self.age)
@@ -145,7 +156,6 @@ class Person:
         openness_modifier = (self.openness * 0.25)
         iq_modifier = (((self.iq - 100)/15) * 5)
         self.expectations = min(100, age_expectations - neuroticism_modifier + openness_modifier + iq_modifier)
-
 
     def setRelationship(self, relationship, person):
         assert(relationship in ["single", "relationship", "marraige"])
@@ -161,7 +171,7 @@ class Person:
     def addHobbies(self, inHobbies):
         hobbies_to_add = []
         for hobbyName, hobbyData in inHobbies:
-            profeciency, enjoyment, reason_for_performance = getProfeciencyAndEnjoyment(hobbyName, self)
+            profeciency, enjoyment, reason_for_performance = getProfeciencyAndEnjoyment(hobbyName, self, "hobby")
 
             hobbies_to_add.append((hobbyName, profeciency, enjoyment))
 

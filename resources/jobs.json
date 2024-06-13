@@ -14,7 +14,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["Junior Developer", "Developer", "Senior Developer", "Lead Developer", "Chief Technology Officer"],
         "entry_pay": 30000,
-        "highest_rung_pay": 120000
+        "highest_rung_pay": 120000,
+        "promotion_curve": 3
     },
     "Data Scientist": {
         "openness": 90,
@@ -31,7 +32,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["Junior Data Scientist", "Data Scientist", "Senior Data Scientist", "Data Science Manager", "Chief Data Officer"],
         "entry_pay": 35000,
-        "highest_rung_pay": 140000
+        "highest_rung_pay": 140000,
+        "promotion_curve": 3
     },
     "Doctor": {
         "openness": 75,
@@ -48,7 +50,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Resident", "Attending Physician", "Senior Physician", "Department Head", "Chief Medical Officer"],
         "entry_pay": 40000,
-        "highest_rung_pay": 150000
+        "highest_rung_pay": 150000,
+        "promotion_curve": 4
     },
     "Nurse": {
         "openness": 70,
@@ -65,7 +68,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Junior Nurse", "Nurse", "Senior Nurse", "Nurse Manager", "Director of Nursing"],
         "entry_pay": 25000,
-        "highest_rung_pay": 60000
+        "highest_rung_pay": 60000,
+        "promotion_curve": 2
     },
     "Teacher": {
         "openness": 85,
@@ -82,7 +86,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Assistant Teacher", "Teacher", "Senior Teacher", "Department Head", "Principal"],
         "entry_pay": 25000,
-        "highest_rung_pay": 80000
+        "highest_rung_pay": 80000,
+        "promotion_curve": 3
     },
     "College Professor": {
         "openness": 90,
@@ -99,7 +104,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["Assistant Professor", "Associate Professor", "Professor", "Department Chair", "Dean"],
         "entry_pay": 45000,
-        "highest_rung_pay": 90000
+        "highest_rung_pay": 90000,
+        "promotion_curve": 5
     },
     "Civil Engineer": {
         "openness": 75,
@@ -116,7 +122,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Engineer", "Engineer", "Senior Engineer", "Project Manager", "Engineering Director"],
         "entry_pay": 28000,
-        "highest_rung_pay": 100000
+        "highest_rung_pay": 100000,
+        "promotion_curve": 3
     },
     "Mechanical Engineer": {
         "openness": 80,
@@ -133,7 +140,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Engineer", "Engineer", "Senior Engineer", "Project Manager", "Engineering Director"],
         "entry_pay": 28000,
-        "highest_rung_pay": 100000
+        "highest_rung_pay": 100000,
+        "promotion_curve": 3
     },
     "Accountant": {
         "openness": -1,
@@ -150,7 +158,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Junior Accountant", "Accountant", "Senior Accountant", "Accounting Manager", "Chief Financial Officer"],
         "entry_pay": 25000,
-        "highest_rung_pay": 120000
+        "highest_rung_pay": 120000,
+        "promotion_curve": 2
     },
     "Financial Trader": {
         "openness": 70,
@@ -167,7 +176,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Trader", "Trader", "Senior Trader", "Trading Manager", "Head of Trading"],
         "entry_pay": 40000,
-        "highest_rung_pay": 200000
+        "highest_rung_pay": 200000,
+        "promotion_curve": 3
     },
     "Graphic Designer": {
         "openness": 85,
@@ -184,7 +194,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["Junior Designer", "Designer", "Senior Designer", "Design Manager", "Creative Director"],
         "entry_pay": 22000,
-        "highest_rung_pay": 70000
+        "highest_rung_pay": 70000,
+        "promotion_curve": 2
     },
     "Musician": {
         "openness": 90,
@@ -201,7 +212,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["Session Musician", "Touring Musician", "Band Leader", "Music Producer", "Music Director"],
         "entry_pay": 20000,
-        "highest_rung_pay": 100000
+        "highest_rung_pay": 100000,
+        "promotion_curve": 4
     },
     "Lawyer": {
         "openness": 75,
@@ -218,7 +230,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Associate", "Associate", "Senior Associate", "Partner", "Managing Partner"],
         "entry_pay": 45000,
-        "highest_rung_pay": 150000
+        "highest_rung_pay": 150000,
+        "promotion_curve": 4
     },
     "Paralegal": {
         "openness": 70,
@@ -235,7 +248,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Junior Paralegal", "Paralegal", "Senior Paralegal", "Paralegal Manager", "Legal Operations Director"],
         "entry_pay": 20000,
-        "highest_rung_pay": 50000
+        "highest_rung_pay": 50000,
+        "promotion_curve": 2
     },
     "Business Analyst": {
         "openness": 80,
@@ -252,7 +266,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Analyst", "Analyst", "Senior Analyst", "Analytics Manager", "Chief Analytics Officer"],
         "entry_pay": 30000,
-        "highest_rung_pay": 90000
+        "highest_rung_pay": 90000,
+        "promotion_curve": 2
     },
     "Marketing Manager": {
         "openness": 85,
@@ -269,7 +284,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["Marketing Coordinator", "Marketing Specialist", "Marketing Manager", "Senior Marketing Manager", "Marketing Director"],
         "entry_pay": 25000,
-        "highest_rung_pay": 120000
+        "highest_rung_pay": 120000,
+        "promotion_curve": 3
     },
     "Biologist": {
         "openness": 80,
@@ -286,7 +302,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Research Assistant", "Biologist", "Senior Biologist", "Lead Scientist", "Research Director"],
         "entry_pay": 25000,
-        "highest_rung_pay": 80000
+        "highest_rung_pay": 80000,
+        "promotion_curve": 3
     },
     "Research Scientist": {
         "openness": 85,
@@ -303,7 +320,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["Research Assistant", "Research Scientist", "Senior Research Scientist", "Principal Investigator", "Chief Scientist"],
         "entry_pay": 30000,
-        "highest_rung_pay": 120000
+        "highest_rung_pay": 120000,
+        "promotion_curve": 4
     },
     "Carpenter": {
         "openness": -1,
@@ -320,7 +338,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Apprentice Carpenter", "Carpenter", "Master Carpenter", "Foreman", "Construction Manager"],
         "entry_pay": 18000,
-        "highest_rung_pay": 45000
+        "highest_rung_pay": 45000,
+        "promotion_curve": 3
     },
     "Electrician": {
         "openness": -1,
@@ -337,7 +356,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Apprentice Electrician", "Electrician", "Master Electrician", "Supervisor", "Electrical Engineer"],
         "entry_pay": 20000,
-        "highest_rung_pay": 50000
+        "highest_rung_pay": 50000,
+        "promotion_curve": 3
     },
     "Chef": {
         "openness": 75,
@@ -354,7 +374,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["Line Cook", "Sous Chef", "Head Chef", "Executive Chef", "Restaurant Owner"],
         "entry_pay": 18000,
-        "highest_rung_pay": 60000
+        "highest_rung_pay": 60000,
+        "promotion_curve": 2
     },
     "Hotel Manager": {
         "openness": 70,
@@ -371,7 +392,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Front Desk Agent", "Front Office Manager", "Assistant Hotel Manager", "Hotel Manager", "Regional Manager"],
         "entry_pay": 25000,
-        "highest_rung_pay": 80000
+        "highest_rung_pay": 80000,
+        "promotion_curve": 3
     },
     "Truck Driver": {
         "openness": -1,
@@ -388,7 +410,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Junior Driver", "Driver", "Senior Driver", "Logistics Coordinator", "Fleet Manager"],
         "entry_pay": 20000,
-        "highest_rung_pay": 35000
+        "highest_rung_pay": 35000,
+        "promotion_curve": 2
     },
     "Airline Pilot": {
         "openness": -1,
@@ -405,7 +428,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Co-Pilot", "Pilot", "Captain", "Senior Captain", "Chief Pilot"],
         "entry_pay": 35000,
-        "highest_rung_pay": 120000
+        "highest_rung_pay": 120000,
+        "promotion_curve": 5
     },
     "Retail Sales Associate": {
         "openness": -1,
@@ -422,7 +446,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Sales Associate", "Senior Sales Associate", "Assistant Manager", "Store Manager", "Regional Manager"],
         "entry_pay": 16000,
-        "highest_rung_pay": 50000
+        "highest_rung_pay": 50000,
+        "promotion_curve": 2
     },
     "Real Estate Agent": {
         "openness": 70,
@@ -439,7 +464,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Junior Agent", "Agent", "Senior Agent", "Broker", "Agency Owner"],
         "entry_pay": 20000,
-        "highest_rung_pay": 100000
+        "highest_rung_pay": 100000,
+        "promotion_curve": 3
     },
     "Police Officer": {
         "openness": -1,
@@ -456,7 +482,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Officer", "Senior Officer", "Sergeant", "Lieutenant", "Chief of Police"],
         "entry_pay": 21000,
-        "highest_rung_pay": 60000
+        "highest_rung_pay": 60000,
+        "promotion_curve": 3
     },
     "Firefighter": {
         "openness": -1,
@@ -473,7 +500,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Firefighter", "Senior Firefighter", "Lieutenant", "Captain", "Fire Chief"],
         "entry_pay": 23000,
-        "highest_rung_pay": 55000
+        "highest_rung_pay": 55000,
+        "promotion_curve": 3
     },
     "Farmer": {
         "openness": 65,
@@ -490,7 +518,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Farm Hand", "Farm Manager", "Senior Farm Manager", "Farm Owner", "Agricultural Consultant"],
         "entry_pay": 18000,
-        "highest_rung_pay": 50000
+        "highest_rung_pay": 50000,
+        "promotion_curve": 4
     },
     "Environmental Consultant": {
         "openness": 85,
@@ -507,7 +536,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Consultant", "Consultant", "Senior Consultant", "Principal Consultant", "Director of Environmental Services"],
         "entry_pay": 25000,
-        "highest_rung_pay": 100000
+        "highest_rung_pay": 100000,
+        "promotion_curve": 3
     },
     "Journalist": {
         "openness": 80,
@@ -524,7 +554,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Reporter", "Reporter", "Senior Reporter", "Editor", "Editor-in-Chief"],
         "entry_pay": 20000,
-        "highest_rung_pay": 80000
+        "highest_rung_pay": 80000,
+        "promotion_curve": 3
     },
     "Public Relations Specialist": {
         "openness": 75,
@@ -541,7 +572,8 @@
         "creativity_slope": 4,
         "promotional_ladder": ["PR Coordinator", "PR Specialist", "Senior PR Specialist", "PR Manager", "PR Director"],
         "entry_pay": 22000,
-        "highest_rung_pay": 90000
+        "highest_rung_pay": 90000,
+        "promotion_curve": 3
     },
     "Policy Analyst": {
         "openness": 85,
@@ -558,7 +590,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Analyst", "Analyst", "Senior Analyst", "Policy Advisor", "Policy Director"],
         "entry_pay": 30000,
-        "highest_rung_pay": 100000
+        "highest_rung_pay": 100000,
+        "promotion_curve": 3
     },
     "Urban Planner": {
         "openness": 80,
@@ -575,7 +608,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Assistant Planner", "Planner", "Senior Planner", "Planning Manager", "Director of Planning"],
         "entry_pay": 25000,
-        "highest_rung_pay": 90000
+        "highest_rung_pay": 90000,
+        "promotion_curve": 3
     },
     "Property Manager": {
         "openness": 70,
@@ -592,7 +626,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Assistant Property Manager", "Property Manager", "Senior Property Manager", "Regional Manager", "Director of Property Management"],
         "entry_pay": 22000,
-        "highest_rung_pay": 80000
+        "highest_rung_pay": 80000,
+        "promotion_curve": 3
     },
     "Real Estate Broker": {
         "openness": 75,
@@ -609,7 +644,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Broker", "Broker", "Senior Broker", "Managing Broker", "Principal Broker"],
         "entry_pay": 25000,
-        "highest_rung_pay": 120000
+        "highest_rung_pay": 120000,
+        "promotion_curve": 3
     },
     "Production Supervisor": {
         "openness": -1,
@@ -626,7 +662,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Production Worker", "Lead Production Worker", "Production Supervisor", "Production Manager", "Plant Manager"],
         "entry_pay": 20000,
-        "highest_rung_pay": 60000
+        "highest_rung_pay": 60000,
+        "promotion_curve": 3
     },
     "Quality Control Inspector": {
         "openness": -1,
@@ -643,7 +680,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Inspector", "Senior Inspector", "Quality Control Supervisor", "Quality Control Manager", "Quality Director"],
         "entry_pay": 20000,
-        "highest_rung_pay": 55000
+        "highest_rung_pay": 55000,
+        "promotion_curve": 3
     },
     "Renewable Energy Technician": {
         "openness": 75,
@@ -660,7 +698,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Technician", "Senior Technician", "Lead Technician", "Site Manager", "Operations Manager"],
         "entry_pay": 23000,
-        "highest_rung_pay": 80000
+        "highest_rung_pay": 80000,
+        "promotion_curve": 3
     },
     "Petroleum Engineer": {
         "openness": 70,
@@ -677,7 +716,8 @@
         "creativity_slope": 3,
         "promotional_ladder": ["Junior Engineer", "Engineer", "Senior Engineer", "Project Manager", "Engineering Director"],
         "entry_pay": 35000,
-        "highest_rung_pay": 120000
+        "highest_rung_pay": 120000,
+        "promotion_curve": 3
     },
     "Retail Cashier": {
         "openness": -1,
@@ -694,7 +734,8 @@
         "creativity_slope": 1,
         "promotional_ladder": ["Cashier"],
         "entry_pay": 16000,
-        "highest_rung_pay": 20000
+        "highest_rung_pay": 20000,
+        "promotion_curve": 1
     },
     "Barista": {
         "openness": -1,
@@ -711,7 +752,8 @@
         "creativity_slope": 1,
         "promotional_ladder": ["Barista"],
         "entry_pay": 16000,
-        "highest_rung_pay": 22000
+        "highest_rung_pay": 22000,
+        "promotion_curve": 1
     },
     "Warehouse Worker": {
         "openness": -1,
@@ -728,7 +770,8 @@
         "creativity_slope": 1,
         "promotional_ladder": ["Warehouse Worker", "Warehouse Supervisor"],
         "entry_pay": 18000,
-        "highest_rung_pay": 30000
+        "highest_rung_pay": 30000,
+        "promotion_curve": 2
     },
     "Janitor": {
         "openness": -1,
@@ -745,7 +788,8 @@
         "creativity_slope": 1,
         "promotional_ladder": ["Janitor", "Lead Janitor"],
         "entry_pay": 16000,
-        "highest_rung_pay": 25000
+        "highest_rung_pay": 25000,
+        "promotion_curve": 1
     },
     "Gardener": {
         "openness": 70,
@@ -762,7 +806,8 @@
         "creativity_slope": 2,
         "promotional_ladder": ["Gardener", "Senior Gardener"],
         "entry_pay": 18000,
-        "highest_rung_pay": 30000
+        "highest_rung_pay": 30000,
+        "promotion_curve": 2
     },
     "Delivery Driver": {
         "openness": -1,
@@ -779,7 +824,8 @@
         "creativity_slope": 1,
         "promotional_ladder": ["Delivery Driver"],
         "entry_pay": 18000,
-        "highest_rung_pay": 30000
+        "highest_rung_pay": 30000,
+        "promotion_curve": 1
     },
     "Security Guard": {
         "openness": -1,
@@ -796,6 +842,7 @@
         "creativity_slope": 1,
         "promotional_ladder": ["Security Guard", "Senior Security Guard"],
         "entry_pay": 18000,
-        "highest_rung_pay": 30000
+        "highest_rung_pay": 30000,
+        "promotion_curve": 2
     }
 }

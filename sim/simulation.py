@@ -1,7 +1,7 @@
 import sim.population_distributions as popDist
 from config import CONF, config
 from helpers import load_json_array
-from sim.person.person_utils import link_2_people_in_relationship, check_person_has_past_marraige, check_person_has_current_relationship, remove_past_marraige, remove_relationship, link_2_people_in_past_marraige
+from sim.person.person_utils import link_2_people_in_relationship, check_person_has_past_marraige, check_person_has_current_relationship, remove_past_marraige, remove_relationship, link_2_people_in_past_marraige, find_ideal_job
 from sim.person.person import Person
 import random
 import numpy as np
@@ -29,6 +29,11 @@ def generate_people():
 
         random_selection = random.sample(list(hobby_master_list.items()), k=random.randint(1, 5))
         newPerson.addHobbies(random_selection)
+
+        if (newPerson.age >= 18):
+            find_ideal_job(newPerson)
+            random_job = random.choice(list(CONF.jobs.items()))
+            newPerson.addJob(random_job)
 
         people.append(newPerson)
 

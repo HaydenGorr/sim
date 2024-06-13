@@ -1,13 +1,14 @@
 class hobby:
-    def __init__(self, name, op, co, ne, ex, ag, min_age, max_age, injury_rating, mean_IQ, mean_creativity):
-        self.name: str = name
-        self.op: float = op
-        self.co: float = co
-        self.ne: float = ne
-        self.ex: float = ex
-        self.ag: float = ag
-        self.min_age: int = min_age
-        self.max_age: int = max_age
-        self.injury_rating: int = injury_rating
-        self.mean_IQ: int = mean_IQ
-        self.mean_creativity: int = mean_creativity
+
+    def __init__(self, name, attributes):
+        self.name = name
+        self.op = attributes.get('openness')
+        self.co = attributes.get('conscientiousness')
+        self.ne = attributes.get('neuroticism')
+        self.ex = attributes.get('extraversion')
+        self.ag = attributes.get('agreeableness')
+        self.min_age = attributes.get('min_age')
+        self.max_age = attributes.get('max_age')
+        self.injury_rating = attributes.get('injury_rating')
+        self.mean_IQ = attributes.get('mean_IQ')
+        self.mean_creativity = attributes.get('mean_creativity')

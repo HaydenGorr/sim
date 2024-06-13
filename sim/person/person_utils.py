@@ -1,4 +1,5 @@
 import math
+from typing import List
 
 def check_person_has_current_relationship(person):
     return person.relationship[0] != "single"
@@ -60,16 +61,16 @@ def calculate_relationship_strength(all_people):
 # profeciency of 0 is average ability
 # profeciency under 0 is under performing
 # profeciency over 0 is high performing
-def getProfeciencyAndEnjoyment(activityName, person):
+def getProfeciencyAndEnjoyment(activityName, person, job_or_hobby):
     from config import CONF
 
-    hobby = CONF.hobbies[activityName]
+    activity = CONF.hobbies[activityName] if job_or_hobby == "hobby" else CONF.jobs[activityName]
     
-    h_op = abs(person.openness - hobby.op) if hobby.op != -1 else 0
-    h_co = abs(person.conscientiousness - hobby.co) if hobby.co != -1 else 0
-    h_ne = abs(person.neuroticism - hobby.ne) if hobby.ne != -1 else 0
-    h_ex = abs(person.extraversion - hobby.ex) if hobby.ex != -1 else 0
-    h_ag = abs(person.agreeableness - hobby.ag) if hobby.ag != -1 else 0
+    h_op = abs(person.openness - activity.op) if activity.op != -1 else 0
+    h_co = abs(person.conscientiousness - activity.co) if activity.co != -1 else 0
+    h_ne = abs(person.neuroticism - activity.ne) if activity.ne != -1 else 0
+    h_ex = abs(person.extraversion - activity.ex) if activity.ex != -1 else 0
+    h_ag = abs(person.agreeableness - activity.ag) if activity.ag != -1 else 0
     i = 0
     if (h_op != 0): i += 1
     if (h_co != 0): i += 1
@@ -82,21 +83,21 @@ def getProfeciencyAndEnjoyment(activityName, person):
     enjoyment = abs(sum/i)
     
     # this calculates how many standard deviations away they are in IQ from the mean for this activity
-    iq_difference = person.iq - CONF.hobbies[activityName].mean_IQ
+    iq_difference = person.iq - activity.mean_IQ
     iq_std = 15
     iq_profeciency = math.ceil(iq_difference/iq_std)
 
     # this calculates how many standard deviations away they are in CREATIVITY from the mean for this activity
-    creativity_difference = person.creativity - CONF.hobbies[activityName].mean_creativity
+    creativity_difference = person.creativity - activity.mean_creativity
     creativity_std = 15
     creativity_profeciency = math.floor(creativity_difference/creativity_std)
 
     # If you're out of the age range the profeciency score is dramatically affected
     age_modifier = 0
-    if (person.age < CONF.hobbies[activityName].min_age):
-        age_modifier = (person.age - CONF.hobbies[activityName].max_age) * 0.20
-    if (person.age > CONF.hobbies[activityName].max_age):
-        age_modifier = (CONF.hobbies[activityName].max_age - person.age) * 0.20
+    if (person.age < activity.min_age):
+        age_modifier = (person.age - activity.max_age) * 0.20
+    if (person.age > activity.max_age):
+        age_modifier = (activity.max_age - person.age) * 0.20
     # ensure the age modifier is limited to -6
     age_modifier = max(-6, min(0, age_modifier))
 
@@ -148,11 +149,86 @@ def convert_profeciency_to_string(profeciency_score):
     elif (profeciency_score == -3): return "terrible performance"
     elif (profeciency_score == -6): return "incapable"
 
-        
+def find_ideal_promotion(person, job, experience_modifier):
+    from config import CONF
+
+    experience_modifier = ((person.age - 18) / 2) / job.promotion_curve
     
+    for i in range(len(job.promotional_ladder)):
+
+        adjustedIQ_req = job.mean_IQ + (i * job.IQ_slope)
+        adjustedCreativity_req = job.mean_creativity + (i * job.creativity_slope)
+
+        # this calculates how many standard deviations away they are in IQ from the mean for this activity
+        iq_difference = person.iq - adjustedIQ_req
+        iq_std = 15
+        iq_profeciency = math.ceil(iq_difference/iq_std)
+
+        # this calculates how many standard deviations away they are in CREATIVITY from the mean for this activity
+        creativity_difference = person.creativity - adjustedCreativity_req
+        creativity_std = 15
+        creativity_profeciency = math.floor(creativity_difference/creativity_std)
+
+        asd = ((iq_profeciency + creativity_profeciency) / 2)
+        qwe = math.floor(((iq_profeciency + creativity_profeciency) / 2) + ((experience_modifier)/len(job.promotional_ladder)))
+
+        if (qwe <= 0): return i
+    return len(job.promotional_ladder) - 1
+
+def find_ideal_job(person):
+    from config import CONF
+    mostEnjoyed: List[str, int, str] = ["", -6, ""]
+    mostProfecient: List[str, int, str] = ["", -6, ""]
+
+    experience_modifier = 0
+
+    for jobName, job in CONF.jobs.items():
+        profeciency, enjoyment, reason_for_performance = getProfeciencyAndEnjoyment(jobName, person, "job")
+
+        if enjoyment > mostEnjoyed[1]:
+            mostEnjoyed = [jobName, enjoyment, reason_for_performance]
+        if profeciency > mostProfecient[1]:
+            mostProfecient = [jobName, profeciency, reason_for_performance]
+
+    enjoyedJob = CONF.jobs[mostEnjoyed[0]]
+    profecientJob = CONF.jobs[mostProfecient[0]]
+
+    enjoyedRung = find_ideal_promotion(person, enjoyedJob, experience_modifier)
+    profecientRung = find_ideal_promotion(person, profecientJob, experience_modifier)
+
+    # How much you'll enjoy the job youre best at but won't enjoy the most
+    # Adjusted for life expectations
+    expectations = (person.expectations/2)
+
+    p_percent = (profecientJob.pay_incriment * (enjoyedRung) + profecientJob.entry_pay) / profecientJob.highest_rung_pay
+    p_expectation_modifier = (p_percent - expectations)  + (0.10 if profecientJob.highest_rung_pay > 50000 else 0) # negative if pay is lower than expectation, positive if heigher
+
+    e_percent = (enjoyedJob.pay_incriment * (enjoyedRung) + enjoyedJob.entry_pay) / enjoyedJob.highest_rung_pay
+    e_expectation_modifier = (e_percent - expectations)  + (0.10 if enjoyedJob.highest_rung_pay > 50000 else 0) # negative if pay is lower than expectation, positive if heigher
+
+    if (p_expectation_modifier > e_expectation_modifier):
+        p_expectation_modifier += 0.05
+        e_expectation_modifier -= 0.05
+    else:
+        p_expectation_modifier -= 0.05
+        e_expectation_modifier += 0.05
 
 
 
 
+
+    pass
+
+
+
+
+
+
+
+
+# 
+def simulate_career_progression(person):
+    from config import CONF
+    if person.job is None: return
 
 

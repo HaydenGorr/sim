@@ -1,6 +1,6 @@
 import os
 from config import createCONF
-createCONF(os.path.join('config.json'), os.path.join('resources', 'hobbies.json'))
+createCONF(os.path.join('config.json'), os.path.join('resources', 'hobbies.json'), os.path.join('resources', 'jobs.json'))
 from sim.simulation import generate_people, match_people, generate_decased_partners
 from config import CONF
 import sys

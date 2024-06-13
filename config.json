@@ -10,5 +10,6 @@
     },
     "city_sizex": 10,  
     "city_sizey": 10,
-    "city_sizez": 10
+    "city_sizez": 10,
+    "retirement_age": 65
 }
