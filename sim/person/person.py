@@ -87,6 +87,8 @@ class Person:
 
         self.alive: bool = alive
 
+        self.happyness = -1
+
         # Personality
         self.openness: float = np.random.choice(popDist.generate_normal_dist(50, 25))
         self.conscientiousness: float = np.random.choice(popDist.generate_normal_dist(50, 25))
@@ -109,7 +111,7 @@ class Person:
         # # 0=single, 1=relationship, 2=married
         self.relationship: Tuple[str, int] = None # the current relationship
         initialise_Relationship(self) # called once to initialise it
-        self.relationship_strength = -1 # how well the relationship is going
+        self.relationship_strength = -1 # how well the relationship is going 0 - 1
 
         #----------------
         # PAST MARRAIGES
@@ -140,16 +142,32 @@ class Person:
         self.expectations: int = None
         self.updateExpectations()
 
-    def addJob(self, inJob: MASTER_JOB):
+    def addJob(self, inJob: MASTER_JOB, promotion_level: int = None):
         if (self.job is not None):
             self.pastJobs.append(self.job)
 
-        profeciency, enjoyment, reason_for_performance = getProfeciencyAndEnjoyment(inJob[0], self, "job")
+        profeciency, enjoyment, reason_for_performance = getProfeciencyAndEnjoyment(inJob.name, self, "job")
 
         self.job = job(inJob, CONF.current_date, None, profeciency, enjoyment, reason_for_performance)
+        if promotion_level: self.job.promote(promotion_level)
 
+    def updateHappyness(self):
+        happyness = 0
 
+        if (self.relationship[0] != "single"):
+            happyness = self.relationship_strength * 0.5
 
+        if (self.neuroticism > 50): happyness -= 0.05
+
+        if (self.job): 
+            happyness += (self.job.enjoyment / 100) * 0.5
+
+            if (self.job.current_pay > 50000):
+                happyness += 0.1
+
+        self.happyness = min (1, happyness)
+
+            
     def updateExpectations(self):
         age_expectations = popDist.sample_expectations(self.age)
         neuroticism_modifier = (self.neuroticism*0.25)

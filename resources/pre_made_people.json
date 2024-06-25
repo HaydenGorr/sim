@@ -1,0 +1,27 @@
+[
+    {
+        "age" :25,
+        "agreeableness": 50,
+        "creativity": 130,
+        "extraversion": 10,
+        "alive": true,
+        "baseline_expectations": 30,
+        "conscientiousness": 70,
+        "firstName": "Emma",
+        "lastName": "Dann",
+        "iq": 110
+    },
+    {
+        "age" :27,
+        "agreeableness": 90,
+        "creativity": 110,
+        "extraversion": 40,
+        "alive": true,
+        "baseline_expectations": 30,
+        "conscientiousness": 70,
+        "firstName": "Hayden",
+        "lastName": "Gorringe",
+        "iq": 110
+    }
+
+]

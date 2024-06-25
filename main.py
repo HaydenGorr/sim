@@ -6,7 +6,7 @@ from config import CONF
 import sys
 import os
 from helpers import relationship_linking_sanity_check, print_a_person
-from sim.person.person_utils import calculate_relationship_strength
+from sim.person.person_utils import calculate_relationship_strength, check_promotion_level_fit
 
 def simulation_loop(all_people, limit):
     for x in range(0, limit):
@@ -37,9 +37,11 @@ if __name__ == "__main__":
     calculate_relationship_strength(all_people)
     relationship_linking_sanity_check(all_people)
 
-    # print_a_person(all_people[345])
+    for person in all_people: person.updateHappyness()
 
     limit = 100
     simulation_loop(all_people, limit)
+
+    check_promotion_level_fit(all_people[23], all_people[23].job.master_job, all_people[23].job.current_rung+1)
 
     pass
